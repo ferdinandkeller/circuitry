@@ -5,7 +5,7 @@ import { viewbox_x, viewbox_y, set_viewbox_x, set_viewbox_y } from './viewbox'
 // load the renderer div which wraps all the canvas
 let maybe_renderer = document.getElementById('renderer') as HTMLDivElement | null
 if (maybe_renderer === null) { throw new Error('Could not find the renderer div') }
-let renderer = maybe_renderer
+export let renderer = maybe_renderer
 
 // load all the canvas
 let background_canvas = document.getElementById('background') as HTMLCanvasElement | null
@@ -43,8 +43,8 @@ export function resize_canvas() {
   background_ctx.scale(pixel_ratio, pixel_ratio)
 
   // resize the static background canvas
-  static_background_ctx.canvas.width = pixel_ratio * (integer_ceiling(renderer.clientWidth, block_size) + 2 * block_size)
-  static_background_ctx.canvas.height = pixel_ratio * (integer_ceiling(renderer.clientHeight, block_size) + 2 * block_size)
+  static_background_ctx.canvas.width = pixel_ratio * (integer_ceiling(renderer.clientWidth, block_size) + block_size)
+  static_background_ctx.canvas.height = pixel_ratio * (integer_ceiling(renderer.clientHeight, block_size) + block_size)
   static_background_ctx.scale(pixel_ratio, pixel_ratio)
 
   // resize the connections canvas

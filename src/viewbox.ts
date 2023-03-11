@@ -1,10 +1,8 @@
 import { render_background } from './background'
 
-// export let current_x = window.innerWidth / 2
-// export let current_y = window.innerHeight / 2
+// set viewbox position relative to the canvas center
 export let viewbox_x = 0
 export let viewbox_y = 0
-
 export function set_viewbox_x(x: number) {
     viewbox_x = x
 }
@@ -12,10 +10,16 @@ export function set_viewbox_y(y: number) {
     viewbox_y = y
 }
 
+export function enter_drag_mode() {}
+
+export function exit_drag_mode() {}
+
+// set viewbox dragging state variables
 let is_dragging = false
 let drag_start_x = 0
 let drag_start_y = 0
 
+// handle dragging mouse events
 export function drag_start(e: MouseEvent) {
     if (is_dragging) return
     is_dragging = true

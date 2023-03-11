@@ -2,11 +2,11 @@
 import './style.scss'
 
 // import ui logic
-// import './canvas.ts'
+import { EditionMode, edition_mode } from './config'
 import { resize_canvas } from './canvas'
 import { render_background, render_static_background } from './background'
-import { MouseOperation, mouse_operation } from './config'
 import { drag_start, drag_move, drag_end } from './viewbox'
+import { connect_start, connect_move, connect_end } from './connect'
 
 // define a full render function
 function full_render() {
@@ -26,25 +26,34 @@ full_render()
 
 // register mouse events
 window.addEventListener('mousedown', (event: MouseEvent) => {
-  switch (mouse_operation) {
-    case MouseOperation.Drag:
+  switch (edition_mode) {
+    case EditionMode.Drag:
       drag_start(event)
+      break
+    case EditionMode.Connect:
+      connect_start(event)
       break
   }
 })
 
 window.addEventListener('mousemove', (event: MouseEvent) => {
-  switch (mouse_operation) {
-    case MouseOperation.Drag:
+  switch (edition_mode) {
+    case EditionMode.Drag:
       drag_move(event)
+      break
+    case EditionMode.Connect:
+      connect_move(event)
       break
   }
 })
 
 window.addEventListener('mouseup', (event: MouseEvent) => {
-  switch (mouse_operation) {
-    case MouseOperation.Drag:
+  switch (edition_mode) {
+    case EditionMode.Drag:
       drag_end(event)
+      break
+    case EditionMode.Connect:
+      connect_end(event)
       break
   }
 })

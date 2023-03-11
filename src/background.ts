@@ -5,7 +5,7 @@ import { mod } from './utils'
 
 export function render_static_background() {
     // set the dots color
-    static_background_ctx.fillStyle = 'hsl(240, 7%, 80%)'
+    static_background_ctx.fillStyle = 'hsl(240, 7%, 85%)'
 
     // compute the number of dots to draw
     let width_point_count = Math.ceil(static_background_ctx.canvas.width / block_size)
@@ -42,7 +42,7 @@ export function render_background(render_viewbox_x: number = viewbox_x, render_v
     )
 
     // draw the center point on the canvas
-    background_ctx.fillStyle = 'hsl(240, 7%, 20%)'
+    background_ctx.strokeStyle = 'hsl(240, 7%, 20%)'
     background_ctx.lineWidth = center_line_width
     background_ctx.lineCap = 'round'
 
