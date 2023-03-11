@@ -8,8 +8,8 @@ export function render_static_background() {
     static_background_ctx.fillStyle = 'hsl(240, 7%, 85%)'
 
     // compute the number of dots to draw
-    let width_point_count = Math.ceil(static_background_ctx.canvas.width / block_size)
-    let height_point_count = Math.ceil(static_background_ctx.canvas.height / block_size)
+    let width_point_count = Math.ceil(static_background_ctx.canvas.width / pixel_ratio / block_size)
+    let height_point_count = Math.ceil(static_background_ctx.canvas.height / pixel_ratio / block_size)
 
     // draw the dots
     for (let x = 0; x < width_point_count; x++) {
