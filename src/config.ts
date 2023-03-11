@@ -1,4 +1,4 @@
-import { enter_drag_mode, exit_drag_mode } from './viewbox'
+import { enter_drag_mode, exit_drag_mode } from './drag'
 import { enter_connect_mode, exit_connect_mode } from './connect'
 
 // define the pixel ratio of the screen
@@ -10,20 +10,29 @@ export enum EditionMode {
   Drag,
   Connect,
 }
-export let edition_mode = EditionMode.Drag
+export let edition_mode = EditionMode.None
 
-// switch edition mode
+// shortcuts to switch between edition modes
 addEventListener('keydown', (event: KeyboardEvent) => {
-  if (event.key === ' ') {
-    if (edition_mode === EditionMode.Connect) {
-      exit_connect_mode()
-      enter_drag_mode()
-      edition_mode = EditionMode.Drag
-    } else {
-      exit_drag_mode()
-      enter_connect_mode()
-      edition_mode = EditionMode.Connect
-    }
+  // enable none mode
+  if ((event.key === 'Escape' || event.key === 'n') && edition_mode !== EditionMode.None) {
+    if (edition_mode === EditionMode.Drag) exit_drag_mode()
+    if (edition_mode === EditionMode.Connect) exit_connect_mode()
+    edition_mode = EditionMode.None
+  }
+
+  // enable drag mode
+  if (event.key === 'd' && edition_mode !== EditionMode.Drag) {
+    if (edition_mode === EditionMode.Connect) exit_connect_mode()
+    edition_mode = EditionMode.Drag
+    enter_drag_mode()
+  }
+
+  // enable connect mode
+  if (event.key === 'c' && edition_mode !== EditionMode.Connect) {
+    if (edition_mode === EditionMode.Drag) exit_drag_mode()
+    edition_mode = EditionMode.Connect
+    enter_connect_mode()
   }
 })
 

@@ -5,7 +5,7 @@ import './style.scss'
 import { EditionMode, edition_mode } from './config'
 import { resize_canvas } from './canvas'
 import { render_background, render_static_background } from './background'
-import { drag_start, drag_move, drag_end } from './viewbox'
+import { drag_start, drag_move, drag_end } from './drag'
 import { connect_start, connect_move, connect_end } from './connect'
 
 // define a full render function

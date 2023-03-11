@@ -38,6 +38,10 @@ body {
       height: 100%;
       position: relative;
 
+      &.drag-mode {
+        cursor: grab;
+      }
+
       &.connect-mode:hover {
         cursor: none;
       }
