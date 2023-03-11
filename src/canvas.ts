@@ -52,8 +52,7 @@ export function resize_canvas() {
   connections_ctx.canvas.height = pixel_ratio * renderer.clientHeight
   connections_ctx.scale(pixel_ratio, pixel_ratio)
 
-  // update the current position to keep the center of the screen
-  // still in the center of the screen
+  // update the viewbox to keep the center of the screen still in the center of the screen
   let delta_width = background_ctx.canvas.width / pixel_ratio - previous_width
   let delta_height = background_ctx.canvas.height / pixel_ratio - previous_height
   set_viewbox_x(viewbox_x - delta_width / 2)

@@ -8,6 +8,12 @@ let connect_start_x = 0
 let connect_start_y = 0
 let connect_end_x = 0
 let connect_end_y = 0
+enum Direction {
+    Horizontal,
+    Vertical,
+}
+let direction = Direction.Horizontal
+let connection_points: [number, number][] = []
 
 export function enter_connect_mode() {
     // add the mode class to the renderer
@@ -27,6 +33,9 @@ export function connect_start(e: MouseEvent) {
     if (is_connecting) return
     is_connecting = true
 
+    // reset the connection points
+    connection_points = []
+
     // get current mouse position on the canvas
     let mouse_x = e.clientX + viewbox_x
     let mouse_y = e.clientY + viewbox_y
@@ -34,6 +43,9 @@ export function connect_start(e: MouseEvent) {
     // find the closest round point
     connect_start_x = integer_rounding(mouse_x, block_size)
     connect_start_y = integer_rounding(mouse_y, block_size)
+
+    // add the start point to the connection points
+    connection_points.push([connect_start_x, connect_start_y])
 
     // clear the canvas
     connections_ctx.clearRect(0, 0, connections_ctx.canvas.width, connections_ctx.canvas.height)
@@ -87,6 +99,28 @@ function connect_move_during(e: MouseEvent) {
     connect_end_x = integer_rounding(mouse_x, block_size)
     connect_end_y = integer_rounding(mouse_y, block_size)
 
+    // round depending on the direction
+    if (direction === Direction.Horizontal) {
+        let delta_vertical = Math.abs(connect_end_y - connect_start_y)
+        if (delta_vertical > 1.5 * block_size) {
+            connect_start_x = connect_end_x
+            connection_points.push([connect_start_x, connect_start_y])
+            direction = Direction.Vertical
+        } else {
+            connect_end_y = connect_start_y
+        }
+    }
+    else if (direction === Direction.Vertical) {
+        let delta_horizontal = Math.abs(connect_end_x - connect_start_x)
+        if (delta_horizontal > 1.5 * block_size) {
+            connect_start_y = connect_end_y
+            connection_points.push([connect_start_x, connect_start_y])
+            direction = Direction.Horizontal
+        } else {
+            connect_end_x = connect_start_x
+        }
+    }
+
     // clear the canvas
     connections_ctx.clearRect(0, 0, connections_ctx.canvas.width, connections_ctx.canvas.height)
 
@@ -96,21 +130,36 @@ function connect_move_during(e: MouseEvent) {
     connections_ctx.lineWidth = dot_size * 2
     connections_ctx.lineCap = 'butt'
 
-    // draw a line
+    // draw the current line
     connections_ctx.beginPath()
     connections_ctx.moveTo(connect_start_x - viewbox_x, connect_start_y - viewbox_y)
     connections_ctx.lineTo(connect_end_x - viewbox_x, connect_end_y - viewbox_y)
     connections_ctx.stroke()
 
-    // draw a start point
+    // draw the other lines
+    for (let point_index = 0; point_index < connection_points.length-1; point_index++) {
+        connections_ctx.beginPath()
+        connections_ctx.moveTo(connection_points[point_index][0] - viewbox_x, connection_points[point_index][1] - viewbox_y)
+        connections_ctx.lineTo(connection_points[point_index+1][0] - viewbox_x, connection_points[point_index+1][1] - viewbox_y)
+        connections_ctx.stroke()
+    }
+
+    // draw the current start point
     connections_ctx.beginPath()
     connections_ctx.arc(connect_start_x - viewbox_x, connect_start_y - viewbox_y, 2 * dot_size, 0, 2 * Math.PI)
     connections_ctx.fill()
     
-    // draw a end point
+    // draw the current end point
     connections_ctx.beginPath()
     connections_ctx.arc(connect_end_x - viewbox_x, connect_end_y - viewbox_y, 2 * dot_size, 0, 2 * Math.PI)
     connections_ctx.fill()
+
+    // draw the other points
+    for (let points of connection_points) {
+        connections_ctx.beginPath()
+        connections_ctx.arc(points[0] - viewbox_x, points[1] - viewbox_y, 2 * dot_size, 0, 2 * Math.PI)
+        connections_ctx.fill()
+    }
 }
 
 export function connect_end(e: MouseEvent) {
