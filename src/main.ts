@@ -2,9 +2,10 @@
 import './style.scss'
 
 // import ui logic
+import './editor/logic'
 import { EditionMode, active_edition_mode } from './editor/logic'
-import { resize_canvas, renderer } from './canvas'
-import { render_background, render_static_background } from './background'
+import { resize_canvas, renderer } from './rendering/canvas'
+import { render_background, render_static_background } from './rendering/background'
 import { pan_start, pan_move, pan_end } from './modes/pan'
 import { connect_start, connect_move, connect_end } from './modes/connect'
 import { update_cursor_pos } from './globals/cursor'

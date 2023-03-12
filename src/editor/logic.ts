@@ -1,6 +1,5 @@
 import { enter_pan_mode, exit_pan_mode } from '@/modes/pan'
 import { enter_connect_mode, exit_connect_mode } from '@/modes/connect'
-import { renderer } from '@/canvas'
 
 /**
  * Valid edition modes.
@@ -27,9 +26,7 @@ function exit_active_mode() {
 }
 
 // shortcuts to switch between edition modes
-// we add the event listener to the renderer, because it's the element that contains the canvas
-// we don't want to trigger the shortcuts when the mouse is outside the editor
-renderer.addEventListener('keydown', (event: KeyboardEvent) => {
+addEventListener('keydown', (event: KeyboardEvent) => {
   // enable none mode
   if ((event.key === 'Escape' || event.key === 'n') && active_edition_mode !== EditionMode.NONE) {
     exit_active_mode()

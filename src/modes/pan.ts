@@ -1,6 +1,6 @@
 import { viewbox_pos } from '@/globals/viewbox'
-import { render_background } from '@/background'
-import { renderer } from '@/canvas'
+import { render_background } from '@/rendering/background'
+import { renderer } from '@/rendering/canvas'
 import { Vector } from '@/utils/vector'
 import { cursor_world_pos } from '@/globals/cursor'
 

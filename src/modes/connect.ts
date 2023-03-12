@@ -1,4 +1,4 @@
-import { connections_ctx, renderer } from '@/canvas'
+import { connections_ctx, renderer } from '@/rendering/canvas'
 import { clear_canvas } from '@/utils/rendering'
 import { Vector } from '@/utils/vector'
 import { viewbox_pos } from '@/globals/viewbox'
