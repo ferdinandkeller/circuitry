@@ -1,8 +1,8 @@
-import { connections_ctx, renderer } from './canvas'
-import { Vector, clear_canvas } from './utils'
-import { viewbox_pos } from './viewbox'
-import { mouse_world_pos, mouse_world_pos_block } from './mouse'
-import { dot_size, block_size, connection_turn_threshold } from './config'
+import { connections_ctx, renderer } from '@/rendering/canvas'
+import { clear_canvas, render_connection_dot } from '@/utils/rendering'
+import { Vector } from '@/utils/vector'
+import { cursor_world_pos, cursor_world_pos_dot } from '@/globals/cursor'
+import { dot_size, connection_line_width, connection_turn_threshold } from '@/editor/configuration'
 
 // set connecting state variables
 let is_connecting = false
@@ -45,17 +45,15 @@ export function connect_start() {
     orientation = Orientation.Unknown
 
     // add the start and end points to the connection points
-    connection_points.push(mouse_world_pos_block.copy())
-    connection_points.push(mouse_world_pos_block.copy())
+    connection_points.push(cursor_world_pos_dot.copy())
+    connection_points.push(cursor_world_pos_dot.copy())
 
     // clear the canvas
     clear_canvas(connections_ctx)
 
     // draw the start point
     connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
-    connections_ctx.beginPath()
-    connections_ctx.arc(connection_points[0].x - viewbox_pos.x, connection_points[0].y - viewbox_pos.y, 2 * dot_size, 0, 2 * Math.PI)
-    connections_ctx.fill()
+    render_connection_dot(connections_ctx, connection_points[0].to_screen())
 }
 
 export function connect_move() {
@@ -66,18 +64,18 @@ export function connect_move() {
     let before_end_point_world_pos = connection_points[connection_points.length - 2]
 
     // compute the delta between the start point and the current mouse position
-    let delta = mouse_world_pos.sub(before_end_point_world_pos).abs()
+    let delta = cursor_world_pos.sub(before_end_point_world_pos).abs()
 
     // update the end point
-    end_point_world_pos.set(mouse_world_pos_block)
+    end_point_world_pos.set(cursor_world_pos_dot)
 
     // find the orientation of the connection
     if (orientation === Orientation.Unknown) {
         // check if we are more than some distance away from the start point
         // if so, set the orientation
-        if (delta.x >= connection_turn_threshold * block_size) {
+        if (delta.x >= connection_turn_threshold * dot_size) {
             orientation = Orientation.Horizontal
-        } else if (delta.y >= connection_turn_threshold * block_size) {
+        } else if (delta.y >= connection_turn_threshold * dot_size) {
             orientation = Orientation.Vertical
         }
         // if the starting orientation is still undetermined,
@@ -90,7 +88,7 @@ export function connect_move() {
         // if in horizontal mode, restrain the vertical movement
         // but if the mouse is more than some distance away from x axis, turn
         end_point_world_pos.y = before_end_point_world_pos.y
-        if (delta.y > connection_turn_threshold * block_size) {
+        if (delta.y > connection_turn_threshold * dot_size) {
             connection_points.push(end_point_world_pos.copy())
             orientation = Orientation.Vertical
         }
@@ -99,7 +97,7 @@ export function connect_move() {
         // if in vertical mode, restrain the horizontal movement
         // but if the mouse is more than some distance away from y axis, turn
         end_point_world_pos.x = before_end_point_world_pos.x
-        if (delta.x > connection_turn_threshold * block_size) {
+        if (delta.x > connection_turn_threshold * dot_size) {
             connection_points.push(end_point_world_pos.copy())
             orientation = Orientation.Horizontal
         }
@@ -114,7 +112,7 @@ export function connect_move() {
     // set the line styles
     connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
     connections_ctx.strokeStyle = 'hsl(240, 7%, 20%)'
-    connections_ctx.lineWidth = dot_size * 2
+    connections_ctx.lineWidth = connection_line_width
     connections_ctx.lineCap = 'butt'
 
     // get the first point of the line
@@ -137,9 +135,7 @@ export function connect_move() {
         let point_screen = world_point.to_screen()
 
         // draw the point
-        connections_ctx.beginPath()
-        connections_ctx.arc(point_screen.x, point_screen.y, 2 * dot_size, 0, 2 * Math.PI)
-        connections_ctx.fill()
+        render_connection_dot(connections_ctx, point_screen)
     }
 }
 

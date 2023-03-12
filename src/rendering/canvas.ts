@@ -1,6 +1,6 @@
-import { pixel_ratio, block_size } from './config'
-import { modulo_ceiling } from './utils'
-import { viewbox_pos } from './viewbox'
+import { pixel_ratio, dot_size } from '@/editor/configuration'
+import { modulo_ceiling } from '@/utils/math'
+import { viewbox_pos } from '@/globals/viewbox'
 
 // load the renderer div which wraps all the canvas
 let maybe_renderer = document.getElementById('renderer') as HTMLDivElement | null
@@ -43,8 +43,8 @@ export function resize_canvas() {
   background_ctx.scale(pixel_ratio, pixel_ratio)
 
   // resize the static background canvas
-  static_background_ctx.canvas.width = pixel_ratio * (modulo_ceiling(renderer.clientWidth, block_size) + block_size)
-  static_background_ctx.canvas.height = pixel_ratio * (modulo_ceiling(renderer.clientHeight, block_size) + block_size)
+  static_background_ctx.canvas.width = pixel_ratio * (modulo_ceiling(renderer.clientWidth, dot_size) + dot_size)
+  static_background_ctx.canvas.height = pixel_ratio * (modulo_ceiling(renderer.clientHeight, dot_size) + dot_size)
   static_background_ctx.scale(pixel_ratio, pixel_ratio)
 
   // resize the connections canvas
