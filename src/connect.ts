@@ -1,5 +1,6 @@
 import { connections_ctx, renderer } from './canvas'
-import { Vector, clear_canvas } from './utils'
+import { clear_canvas } from './utils/rendering'
+import { Vector } from './utils/vector'
 import { viewbox_pos } from './viewbox'
 import { mouse_world_pos, mouse_world_pos_block } from './mouse'
 import { dot_size, block_size, connection_turn_threshold } from './config'

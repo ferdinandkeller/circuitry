@@ -1,7 +1,8 @@
 import { background_ctx, static_background_ctx } from './canvas'
 import { block_size, dot_size, cross_line_width, cross_line_size, pixel_ratio } from './config'
 import { viewbox_pos } from './viewbox'
-import { clear_canvas, Vector } from './utils'
+import { clear_canvas, } from './utils/rendering'
+import { Vector } from './utils/vector'
 
 export function render_static_background() {
     // compute the number of dots to draw

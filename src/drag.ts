@@ -1,7 +1,7 @@
 import { viewbox_pos } from './viewbox'
 import { render_background } from './background'
 import { renderer } from './canvas'
-import { Vector } from './utils'
+import { Vector } from './utils/vector'
 import { mouse_world_pos } from './mouse'
 
 

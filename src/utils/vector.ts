@@ -1,29 +1,5 @@
-import { viewbox_pos } from './viewbox'
-
-// define a canvas context clearing method
-export function clear_canvas(ctx: CanvasRenderingContext2D) {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-}
-
-// define a method to round a number to a multiple of another number
-export function modulo_rounding(num: number, modulo: number): number {
-    return Math.round(num / modulo) * modulo
-}
-
-// define a method to ceil a number to a multiple of another number
-export function modulo_ceiling(num: number, modulo: number): number {
-    return Math.ceil(num / modulo) * modulo
-}
-
-// define a method to floor a number to a multiple of another number
-export function modulo_flooring(num: number, modulo: number): number {
-    return Math.floor(num / modulo) * modulo
-}
-
-// define a struct modulo function
-export function mod(num: number, modulo: number): number {
-    return ((num % modulo) + modulo) % modulo
-}
+import { viewbox_pos } from '../viewbox'
+import { modulo_ceiling, modulo_rounding, modulo_flooring, mod } from './math'
 
 // define a vector struct
 export class Vector {

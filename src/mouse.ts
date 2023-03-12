@@ -1,4 +1,4 @@
-import { Vector } from './utils'
+import { Vector } from './utils/vector'
 import { block_size } from './config'
 
 // define a variable to store the mouse's position

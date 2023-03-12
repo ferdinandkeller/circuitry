@@ -1,5 +1,5 @@
 import { pixel_ratio, block_size } from './config'
-import { modulo_ceiling } from './utils'
+import { modulo_ceiling } from './utils/math'
 import { viewbox_pos } from './viewbox'
 
 // load the renderer div which wraps all the canvas
