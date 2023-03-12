@@ -3,10 +3,11 @@ import './style.scss'
 
 // import ui logic
 import { EditionMode, edition_mode } from './config'
-import { resize_canvas } from './canvas'
+import { resize_canvas, renderer } from './canvas'
 import { render_background, render_static_background } from './background'
 import { drag_start, drag_move, drag_end } from './drag'
 import { connect_start, connect_move, connect_end } from './connect'
+import { update_mouse_pos } from './mouse'
 
 // define a full render function
 function full_render() {
@@ -24,36 +25,50 @@ window.addEventListener('resize', full_render)
 // trigger an initial full render
 full_render()
 
-// register mouse events
-window.addEventListener('mousedown', (event: MouseEvent) => {
+// register mouse events on the renderer
+// this is because this element contains the canvas
+// and it might not be the same size as the window
+renderer.addEventListener('mousedown', (mouse_event: MouseEvent) => {
+  // update the mouse's position
+  update_mouse_pos(mouse_event)
+  
+  // update depending on the active edition mode
   switch (edition_mode) {
     case EditionMode.Drag:
-      drag_start(event)
+      drag_start()
       break
     case EditionMode.Connect:
-      connect_start(event)
+      connect_start()
       break
   }
 })
 
-window.addEventListener('mousemove', (event: MouseEvent) => {
+renderer.addEventListener('mousemove', (event: MouseEvent) => {
+  // update the mouse's position
+  update_mouse_pos(event)
+  
+  // update depending on the active edition mode
   switch (edition_mode) {
     case EditionMode.Drag:
-      drag_move(event)
+      drag_move()
       break
     case EditionMode.Connect:
-      connect_move(event)
+      connect_move()
       break
   }
 })
 
-window.addEventListener('mouseup', (event: MouseEvent) => {
+renderer.addEventListener('mouseup', (event: MouseEvent) => {
+  // update the mouse's position
+  update_mouse_pos(event)
+  
+  // update depending on the active edition mode
   switch (edition_mode) {
     case EditionMode.Drag:
-      drag_end(event)
+      drag_end()
       break
     case EditionMode.Connect:
-      connect_end(event)
+      connect_end()
       break
   }
 })

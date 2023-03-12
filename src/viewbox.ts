@@ -1,9 +1,4 @@
-// set viewbox position relative to the canvas center
-export let viewbox_x = 0
-export let viewbox_y = 0
-export function set_viewbox_x(x: number) {
-    viewbox_x = x
-}
-export function set_viewbox_y(y: number) {
-    viewbox_y = y
-}
+import { Vector } from './utils'
+
+// the viewbox position represents the top left corner of the visible area
+export let viewbox_pos = new Vector(0, 0)

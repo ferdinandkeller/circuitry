@@ -1,6 +1,6 @@
 import { pixel_ratio, block_size } from './config'
-import { integer_ceiling } from './utils'
-import { viewbox_x, viewbox_y, set_viewbox_x, set_viewbox_y } from './viewbox'
+import { modulo_ceiling } from './utils'
+import { viewbox_pos } from './viewbox'
 
 // load the renderer div which wraps all the canvas
 let maybe_renderer = document.getElementById('renderer') as HTMLDivElement | null
@@ -43,8 +43,8 @@ export function resize_canvas() {
   background_ctx.scale(pixel_ratio, pixel_ratio)
 
   // resize the static background canvas
-  static_background_ctx.canvas.width = pixel_ratio * (integer_ceiling(renderer.clientWidth, block_size) + block_size)
-  static_background_ctx.canvas.height = pixel_ratio * (integer_ceiling(renderer.clientHeight, block_size) + block_size)
+  static_background_ctx.canvas.width = pixel_ratio * (modulo_ceiling(renderer.clientWidth, block_size) + block_size)
+  static_background_ctx.canvas.height = pixel_ratio * (modulo_ceiling(renderer.clientHeight, block_size) + block_size)
   static_background_ctx.scale(pixel_ratio, pixel_ratio)
 
   // resize the connections canvas
@@ -55,8 +55,8 @@ export function resize_canvas() {
   // update the viewbox to keep the center of the screen still in the center of the screen
   let delta_width = background_ctx.canvas.width / pixel_ratio - previous_width
   let delta_height = background_ctx.canvas.height / pixel_ratio - previous_height
-  set_viewbox_x(viewbox_x - delta_width / 2)
-  set_viewbox_y(viewbox_y - delta_height / 2)
+  viewbox_pos.x -= delta_width / 2
+  viewbox_pos.y -= delta_height / 2
   previous_width = background_ctx.canvas.width / pixel_ratio
   previous_height = background_ctx.canvas.height / pixel_ratio
 }

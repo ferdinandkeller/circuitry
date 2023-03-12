@@ -1,15 +1,22 @@
 import { background_ctx, static_background_ctx } from './canvas'
-import { block_size, dot_size, center_line_width, center_line_size, pixel_ratio } from './config'
-import { viewbox_x, viewbox_y } from './viewbox'
-import { mod } from './utils'
+import { block_size, dot_size, cross_line_width, cross_line_size, pixel_ratio } from './config'
+import { viewbox_pos } from './viewbox'
+import { clear_canvas, Vector } from './utils'
 
 export function render_static_background() {
+    // compute the number of dots to draw
+    // the static background canvas is a virtual canvas which size is a multiple of the block size
+    // so there is no need to compute any kind of rounding
+    // we render the static background once and then we draw it on the visible (real) background
+    // with some offset to create the illusion of an infinite background
+    let width_point_count = static_background_ctx.canvas.width / pixel_ratio / block_size + 1
+    let height_point_count = static_background_ctx.canvas.height / pixel_ratio / block_size + 1
+
+    // clear the static background
+    clear_canvas(static_background_ctx)
+
     // set the dots color
     static_background_ctx.fillStyle = 'hsl(240, 7%, 85%)'
-
-    // compute the number of dots to draw
-    let width_point_count = Math.ceil(static_background_ctx.canvas.width / pixel_ratio / block_size)
-    let height_point_count = Math.ceil(static_background_ctx.canvas.height / pixel_ratio / block_size)
 
     // draw the dots
     for (let x = 0; x < width_point_count; x++) {
@@ -21,38 +28,42 @@ export function render_static_background() {
     }
 }
 
-export function render_background(render_viewbox_x: number = viewbox_x, render_viewbox_y: number = viewbox_y) {
-    // compute modulo of the current position
-    let mod_x = mod(-render_viewbox_x, block_size)
-    let mod_y = mod(-render_viewbox_y, block_size)
+export function render_background() {
+    // compute negative modulo of the current position
+    // negative because the static canvas drawing goes in the opposite direction of the viewbox
+    // modulo because the static background is repeated and we use that to make it appear infinite
+    let viewbox_pos_neg_modulo = viewbox_pos.neg().mod(block_size)
 
     // clear the background
-    background_ctx.clearRect(0, 0, background_ctx.canvas.width, background_ctx.canvas.height)
+    clear_canvas(background_ctx)
 
-    // draw the background on the visible canvas
+    // draw the static background on the visible background
     background_ctx.drawImage(
         // the image (actually the static background canvas)
         static_background_ctx.canvas,
         // where to draw the canvas (top and left corners)
-        mod_x - block_size,
-        mod_y - block_size, 
+        viewbox_pos_neg_modulo.x - block_size,
+        viewbox_pos_neg_modulo.y - block_size, 
         // the size of the canvas
         static_background_ctx.canvas.width / pixel_ratio,
         static_background_ctx.canvas.height / pixel_ratio
     )
 
-    // draw the center point on the canvas
+    // get the position of the cross in screen coordinates
+    let cross_pos = Vector.zero().to_screen()
+
+    // draw the center cross on the canvas
     background_ctx.strokeStyle = 'hsl(240, 7%, 20%)'
-    background_ctx.lineWidth = center_line_width
+    background_ctx.lineWidth = cross_line_width
     background_ctx.lineCap = 'round'
 
     background_ctx.beginPath()
-    background_ctx.moveTo(-render_viewbox_x - center_line_size, -render_viewbox_y)
-    background_ctx.lineTo(-render_viewbox_x + center_line_size, -render_viewbox_y)
+    background_ctx.moveTo(cross_pos.x - cross_line_size, cross_pos.y)
+    background_ctx.lineTo(cross_pos.x + cross_line_size, cross_pos.y)
     background_ctx.stroke()
 
     background_ctx.beginPath()
-    background_ctx.moveTo(-render_viewbox_x, -render_viewbox_y - center_line_size)
-    background_ctx.lineTo(-render_viewbox_x, -render_viewbox_y + center_line_size)
+    background_ctx.moveTo(cross_pos.x, cross_pos.y - cross_line_size)
+    background_ctx.lineTo(cross_pos.x, cross_pos.y + cross_line_size)
     background_ctx.stroke()
 }
