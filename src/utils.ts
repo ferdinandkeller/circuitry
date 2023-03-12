@@ -163,4 +163,9 @@ export class Vector {
     to_screen_assign(): Vector {
         return this.sub_assign(viewbox_pos)
     }
+
+    // add comparison methods
+    is_equal_to(vector: Vector): boolean {
+        return this.x === vector.x && this.y === vector.y
+    }
 }

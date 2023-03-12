@@ -1,24 +1,22 @@
 import { connections_ctx, renderer } from './canvas'
 import { Vector, clear_canvas } from './utils'
 import { viewbox_pos } from './viewbox'
-import { mouse_world_pos, mouse_world_pos_block, mouse_screen_pos_block } from './mouse'
-import { cross_line_size, cross_line_width, dot_size, block_size, connection_turn_threshold } from './config'
+import { mouse_world_pos, mouse_world_pos_block } from './mouse'
+import { dot_size, block_size, connection_turn_threshold } from './config'
 
 // set connecting state variables
 let is_connecting = false
-let connect_start_world_pos_block = Vector.zero()
-let connect_end_word_pos_block = Vector.zero()
-
-// define an enum to store the current direction of the connection
-enum Direction {
-    Unset,
-    Horizontal,
-    Vertical,
-}
-let direction = Direction.Unset
 
 // define a vector to store the connection points
 let connection_points: Vector[] = []
+
+// define an enum to store the current orientation of the connection
+enum Orientation {
+    Unknown,
+    Horizontal,
+    Vertical,
+}
+let orientation = Orientation.Unknown
 
 // mod switch handlers
 export function enter_connect_mode() {
@@ -44,14 +42,11 @@ export function connect_start() {
     connection_points = []
 
     // reset the direction
-    direction = Direction.Unset
+    orientation = Orientation.Unknown
 
-    // initialise the start and end points
-    connect_start_world_pos_block.set(mouse_world_pos_block)
-    connect_end_word_pos_block.set(mouse_world_pos_block)
-
-    // add the start point to the connection points
-    connection_points.push(connect_start_world_pos_block.copy())
+    // add the start and end points to the connection points
+    connection_points.push(mouse_world_pos_block.copy())
+    connection_points.push(mouse_world_pos_block.copy())
 
     // clear the canvas
     clear_canvas(connections_ctx)
@@ -59,81 +54,59 @@ export function connect_start() {
     // draw the start point
     connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
     connections_ctx.beginPath()
-    connections_ctx.arc(connect_start_world_pos_block.x - viewbox_pos.x, connect_start_world_pos_block.y - viewbox_pos.y, 2 * dot_size, 0, 2 * Math.PI)
+    connections_ctx.arc(connection_points[0].x - viewbox_pos.x, connection_points[0].y - viewbox_pos.y, 2 * dot_size, 0, 2 * Math.PI)
     connections_ctx.fill()
 }
 
 export function connect_move() {
-    if (!is_connecting) connect_move_visualising()
-    else connect_move_connecting()
-}
+    if (!is_connecting) return
 
-function connect_move_visualising() {
-    // clear the canvas
-    clear_canvas(connections_ctx)
+    // get the endpoint and the one before it
+    let end_point_world_pos = connection_points[connection_points.length - 1]
+    let before_end_point_world_pos = connection_points[connection_points.length - 2]
 
-    // draw the cross
-    connections_ctx.strokeStyle = 'hsl(240, 7%, 85%)'
-    connections_ctx.lineWidth = cross_line_width
-    connections_ctx.lineCap = 'round'
-
-    connections_ctx.beginPath()
-    connections_ctx.moveTo(mouse_screen_pos_block.x - cross_line_size, mouse_screen_pos_block.y)
-    connections_ctx.lineTo(mouse_screen_pos_block.x + cross_line_size, mouse_screen_pos_block.y)
-    connections_ctx.stroke()
-
-    connections_ctx.beginPath()
-    connections_ctx.moveTo(mouse_screen_pos_block.x, mouse_screen_pos_block.y - cross_line_size)
-    connections_ctx.lineTo(mouse_screen_pos_block.x, mouse_screen_pos_block.y + cross_line_size)
-    connections_ctx.stroke()
-}
-
-function connect_move_connecting() {
     // compute the delta between the start point and the current mouse position
-    let delta = mouse_world_pos.sub(connect_start_world_pos_block).abs()
+    let delta = mouse_world_pos.sub(before_end_point_world_pos).abs()
 
     // update the end point
-    connect_end_word_pos_block.set(mouse_world_pos_block)
+    end_point_world_pos.set(mouse_world_pos_block)
 
-    // find the direction of the connection
-    if (direction === Direction.Unset) {
-        // check if we are more than half a block away from the start point
-        // if so, set the direction
-        if (delta.x > block_size) {
-            direction = Direction.Horizontal
-        } else if (delta.y > block_size) {
-            direction = Direction.Vertical
+    // find the orientation of the connection
+    if (orientation === Orientation.Unknown) {
+        // check if we are more than some distance away from the start point
+        // if so, set the orientation
+        if (delta.x >= connection_turn_threshold * block_size) {
+            orientation = Orientation.Horizontal
+        } else if (delta.y >= connection_turn_threshold * block_size) {
+            orientation = Orientation.Vertical
         }
+        // if the starting orientation is still undetermined,
+        // we prevent rendering anything by returning early
+        return
     }
     
-    // depending on the direction, detect if we need to turn
-    if (direction === Direction.Horizontal) {
+    // depending on the orientation, detect if we need to turn
+    if (orientation === Orientation.Horizontal) {
         // if in horizontal mode, restrain the vertical movement
         // but if the mouse is more than some distance away from x axis, turn
+        end_point_world_pos.y = before_end_point_world_pos.y
         if (delta.y > connection_turn_threshold * block_size) {
-            connect_start_world_pos_block.x = connect_end_word_pos_block.x
-            connection_points.push(connect_start_world_pos_block.copy())
-            direction = Direction.Vertical
-        } else {
-            connect_end_word_pos_block.y = connect_start_world_pos_block.y
+            connection_points.push(end_point_world_pos.copy())
+            orientation = Orientation.Vertical
         }
     }
-    else if (direction === Direction.Vertical) {
+    else if (orientation === Orientation.Vertical) {
         // if in vertical mode, restrain the horizontal movement
         // but if the mouse is more than some distance away from y axis, turn
+        end_point_world_pos.x = before_end_point_world_pos.x
         if (delta.x > connection_turn_threshold * block_size) {
-            connect_start_world_pos_block.y = connect_end_word_pos_block.y
-            connection_points.push(connect_start_world_pos_block.copy())
-            direction = Direction.Horizontal
-        } else {
-            connect_end_word_pos_block.x = connect_start_world_pos_block.x
+            connection_points.push(end_point_world_pos.copy())
+            orientation = Orientation.Horizontal
         }
     }
 
-    // // check for overlapping between lines
-    // // connection_points.push([connect_end_x, connect_end_y])
-    // // simplify_connection()
-    // // connection_points.pop()
+    // simplify the connection
+    simplify_connection()
 
     // clear the canvas
     connections_ctx.clearRect(0, 0, connections_ctx.canvas.width, connections_ctx.canvas.height)
@@ -144,40 +117,21 @@ function connect_move_connecting() {
     connections_ctx.lineWidth = dot_size * 2
     connections_ctx.lineCap = 'butt'
 
-    // convert the connect start and end point to screen coordinates
-    let connect_start_screen_pos_block = connect_start_world_pos_block.to_screen()
-    let connect_end_screen_pos_block = connect_end_word_pos_block.to_screen()
+    // get the first point of the line
+    let line_first_point_screen = connection_points[0].to_screen()
 
-    // draw the current line
+    // draw the lines
     connections_ctx.beginPath()
-    connections_ctx.moveTo(connect_start_screen_pos_block.x, connect_start_screen_pos_block.y)
-    connections_ctx.lineTo(connect_end_screen_pos_block.x, connect_end_screen_pos_block.y)
+    connections_ctx.moveTo(line_first_point_screen.x, line_first_point_screen.y)
+    for (let point_index = 1; point_index < connection_points.length; point_index++) {
+        // convert the point to screen coordinates
+        let point_screen = connection_points[point_index].to_screen()
+        // draw the line
+        connections_ctx.lineTo(point_screen.x, point_screen.y)
+    }
     connections_ctx.stroke()
 
-    // draw the other lines
-    for (let point_index = 0; point_index < connection_points.length-1; point_index++) {
-        // convert the point to screen coordinates
-        let start_point_screen = connection_points[point_index].to_screen()
-        let end_point_screen = connection_points[point_index+1].to_screen()
-
-        // draw the point
-        connections_ctx.beginPath()
-        connections_ctx.moveTo(start_point_screen.x, start_point_screen.y)
-        connections_ctx.lineTo(end_point_screen.x, end_point_screen.y)
-        connections_ctx.stroke()
-    }
-
-    // draw the current start point
-    connections_ctx.beginPath()
-    connections_ctx.arc(connect_start_screen_pos_block.x, connect_start_screen_pos_block.y, 2 * dot_size, 0, 2 * Math.PI)
-    connections_ctx.fill()
-    
-    // draw the current end point
-    connections_ctx.beginPath()
-    connections_ctx.arc(connect_end_screen_pos_block.x, connect_end_screen_pos_block.y, 2 * dot_size, 0, 2 * Math.PI)
-    connections_ctx.fill()
-
-    // draw the other points
+    // draw the points
     for (let world_point of connection_points) {
         // convert the point to screen coordinates
         let point_screen = world_point.to_screen()
@@ -195,78 +149,134 @@ export function connect_end() {
 
     // clear the canvas
     clear_canvas(connections_ctx)
-
-    // draw the cursor position
-    connect_move_visualising()
 }
 
-// function simplify_connection() {
-//     // simplify the connection by removing the points that are on the same line
-//     // or a line that crosses another line
+function simplify_connection() {
+    // this method simplifies the connection by loving, removing and merging points
 
-//     // if there are less than 2 points, there is nothing to simplify
-//     if (connection_points.length < 2) return
+    // for each line in the connection
+    // we ignore the last line because it is the one that follows the mouse
+    for (let line_1_index = 0; line_1_index < connection_points.length - 2; line_1_index++) {
+        // find the orientation of the first line
+        let line_1_start  = connection_points[line_1_index]
+        let line_1_end = connection_points[line_1_index+1]
+        let first_line_orientation = line_orientation(line_1_start, line_1_end)
 
-//     // test if the line starts horizontally or vertically
-//     let direction = connection_points[0][0] === connection_points[1][0] ? Direction.Vertical : Direction.Horizontal
+        // check if the point and its neighbor overlap
+        if (first_line_orientation === Orientation.Unknown) {
+            // remove the following point
+            connection_points.splice(line_1_index + 1, 1)
+            // re-run the loop on the same index to check for further simplifications
+            continue
+        }
 
-//     // flag to check if the connection has changed
-//     let has_changed = false
+        // for each line after the first one
+        // we use a while loop because we might remove points,
+        // so some times we might want to re-run the loop on the same index,
+        // consequence : for loops are not suited
+        // we also ignore the last point because it does not represent
+        // the start of a new line, but only the end of the last line
+        let line_2_index = line_1_index + 1
+        while (line_2_index < connection_points.length - 1) {
+            // find the orientation of the second line
+            let line_2_start = connection_points[line_2_index]
+            let line_2_end = connection_points[line_2_index+1]
+            let second_line_orientation = line_orientation(line_2_start, line_2_end)
 
-//     point_loop: for (let line_1_index = 0; line_1_index < connection_points.length-1; line_1_index++) {
-//         for (let line_2_index = line_1_index + 3; line_2_index < connection_points.length-1; line_2_index += 2) {
-//             // check for overlapping lines
-//             let line_1: [[number, number], [number, number]] = [connection_points[line_1_index], connection_points[line_1_index+1]]
-//             let line_2: [[number, number], [number, number]] = [connection_points[line_2_index], connection_points[line_2_index+1]]
-//             if (do_lines_overlap(direction, line_1, line_2)) {
-//                 // move the second point of the first line
-//                 if (direction === Direction.Horizontal) {
-//                     connection_points[line_1_index+1][0] = connection_points[line_2_index][0]
-//                 } else if (direction === Direction.Vertical) {
-//                     connection_points[line_1_index+1][1] = connection_points[line_2_index][1]
-//                 }
-//                 // remove the unnecessary points
-//                 connection_points.splice(line_1_index+2, line_2_index - line_1_index - 1)
-//                 // flag the connection as changed
-//                 has_changed = true
-//                 // exit the loop
-//                 break point_loop
-//             }
-//         }
+            // check cross over if the lines are perpendicular
+            if (first_line_orientation !== second_line_orientation) {
+                // ignore the check if the two lines are connected,
+                // because we don't want to merge connected lines that are perpendicular
+                if (line_1_index + 1 !== line_2_index) {
+                    // check if the two lines cross each other
+                    if (do_lines_crossover(first_line_orientation, line_1_start, line_1_end, line_2_start, line_2_end)) {
+                        // the two lines cross each other, move the second point of the first line
+                        if (first_line_orientation === Orientation.Horizontal) { line_1_end.x = line_2_start.x }
+                        else if (orientation === Orientation.Vertical) { line_1_end.y = line_2_start.y }
+                        // remove the unnecessary points
+                        connection_points.splice(line_1_index + 2, line_2_index - line_1_index - 1)
+                        // re-run the loop on the same index to check for further simplifications
+                        continue
+                    }
+                }
+            }
+            // check overlap if the lines are parallel
+            if (first_line_orientation === second_line_orientation) {
+                // we don't check if the two lines are connect,
+                // because we want to merge connected lines that are parallel
+                // check if the lines cross each other
+                if (do_lines_overlap(first_line_orientation, line_1_start, line_1_end, line_2_start, line_2_end)) {
+                    // if they do, remove the unnecessary points
+                    connection_points.splice(line_1_index + 1, line_2_index - line_1_index)
+                    // re-run the loop on the same index to check for further simplifications
+                    continue
+                }
+            }
 
-//         // switch the direction
-//         if (direction === Direction.Horizontal) {
-//             direction = Direction.Vertical
-//         } else {
-//             direction = Direction.Horizontal
-//         }
-//     }
+            // increment the second line index if we didn't find any simplification to do
+            line_2_index += 1
+        }
+    }
+}
 
-//     // if the connection changed, simplify it again
-//     if (has_changed) simplify_connection()
-// }
+function line_orientation(line_start: Vector, line_end: Vector): Orientation {
+    // this function returns the orientation of a line
+    // it makes the assumption that the line is either horizontal or vertical
 
-// function do_lines_overlap(direction: Direction, line_1: [[number, number], [number, number]], line_2: [[number, number], [number, number]]) {
-//     if (direction === Direction.Horizontal) {
-//         let line_1_y_axis = line_1[0][1]
-//         let line_2_x_axis = line_2[0][0]
-//         return  (
-//                     (line_2[0][1] < line_1_y_axis && line_1_y_axis < line_2[1][1]) ||
-//                     (line_2[1][1] < line_1_y_axis && line_1_y_axis < line_2[0][1])
-//                 ) && (
-//                     (line_1[0][0] < line_2_x_axis && line_2_x_axis < line_1[1][0]) ||
-//                     (line_1[1][0] < line_2_x_axis && line_2_x_axis < line_1[0][0])
-//                 )
-//     } else if (direction === Direction.Vertical) {
-//         let line_1_x_axis = line_1[0][0]
-//         let line_2_y_axis = line_2[0][1]
-//         return  (
-//                     (line_2[0][0] < line_1_x_axis && line_1_x_axis < line_2[1][0]) ||
-//                     (line_2[1][0] < line_1_x_axis && line_1_x_axis < line_2[0][0])
-//                 ) && (
-//                     (line_1[0][1] < line_2_y_axis && line_2_y_axis < line_1[1][1]) ||
-//                     (line_1[1][1] < line_2_y_axis && line_2_y_axis < line_1[0][1])
-//                 )
-//     }
-//     return false
-// }
+    // if the line is of zero length, ignore
+    if (line_start.is_equal_to(line_end)) { return Orientation.Unknown }
+
+    // check if the line is horizontal or vertical
+    if (line_start.x === line_end.x) { return Orientation.Vertical }
+    else if (line_start.y === line_end.y) { return Orientation.Horizontal }
+    else { throw new Error('Invalid line direction') }
+}
+
+function do_lines_crossover(
+    first_line_orientation: Orientation,
+    line_1_start: Vector, line_1_end: Vector,
+    line_2_start: Vector, line_2_end: Vector
+): boolean {
+    // this function checks if the two lines cross each other
+    // it makes the assumption that the lines are at 90 degrees to each other
+    // and that the first line is going in the direorientationction specified by the first_line_orientation parameter
+    if (first_line_orientation === Orientation.Horizontal) {
+        return  (
+                    Math.min(line_2_start.y, line_2_end.y) <= line_1_start.y &&
+                    line_1_start.y <= Math.max(line_2_start.y, line_2_end.y) &&
+                    Math.min(line_1_start.x, line_1_end.x) <= line_2_start.x &&
+                    line_2_start.x <= Math.max(line_1_start.x, line_1_end.x)
+                )
+    }
+    else if (first_line_orientation === Orientation.Vertical) {
+        return  (
+                    Math.min(line_2_start.x, line_2_end.x) <= line_1_start.x &&
+                    line_1_start.x <= Math.max(line_2_start.x, line_2_end.x) &&
+                    Math.min(line_1_start.y, line_1_end.y) <= line_2_start.y &&
+                    line_2_start.y <= Math.max(line_1_start.y, line_1_end.y)
+                )
+    } else {
+        throw new Error('Invalid orientation specified')
+    }
+}
+
+function do_lines_overlap(
+    first_line_orientation: Orientation,
+    line_1_start: Vector, line_1_end: Vector,
+    line_2_start: Vector, line_2_end: Vector
+): boolean {
+    // this function checks if the two lines overlap each other
+    // it makes the assumption that the lines are parallel
+    // and that both lines are going in the orientation specified by the first_line_orientation parameter
+    if (first_line_orientation === Orientation.Horizontal) {
+        return  line_1_start.y === line_2_start.y &&
+                Math.min(line_2_start.x, line_2_end.x) <= Math.max(line_1_start.x, line_1_end.x) &&
+                Math.min(line_1_start.x, line_1_end.x) <= Math.max(line_2_start.x, line_2_end.x)
+    } else if (first_line_orientation === Orientation.Vertical) {
+        return  line_1_start.x === line_2_start.x &&
+                Math.min(line_2_start.y, line_2_end.y) <= Math.max(line_1_start.y, line_1_end.y) &&
+                Math.min(line_1_start.y, line_1_end.y) <= Math.max(line_2_start.y, line_2_end.y)
+    } else {
+        throw new Error('Invalid orientation specified')        
+    }
+}
