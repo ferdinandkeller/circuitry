@@ -2,10 +2,10 @@
 import './style.scss'
 
 // import ui logic
-import { EditionMode, edition_mode } from './config'
+import { EditionMode, edition_mode } from './editor_logic'
 import { resize_canvas, renderer } from './canvas'
 import { render_background, render_static_background } from './background'
-import { drag_start, drag_move, drag_end } from './drag'
+import { pan_start, pan_move, pan_end } from './pan'
 import { connect_start, connect_move, connect_end } from './connect'
 import { update_mouse_pos } from './mouse'
 
@@ -34,8 +34,8 @@ renderer.addEventListener('mousedown', (mouse_event: MouseEvent) => {
   
   // update depending on the active edition mode
   switch (edition_mode) {
-    case EditionMode.Drag:
-      drag_start()
+    case EditionMode.Pan:
+      pan_start()
       break
     case EditionMode.Connect:
       connect_start()
@@ -49,8 +49,8 @@ renderer.addEventListener('mousemove', (event: MouseEvent) => {
   
   // update depending on the active edition mode
   switch (edition_mode) {
-    case EditionMode.Drag:
-      drag_move()
+    case EditionMode.Pan:
+      pan_move()
       break
     case EditionMode.Connect:
       connect_move()
@@ -64,8 +64,8 @@ renderer.addEventListener('mouseup', (event: MouseEvent) => {
   
   // update depending on the active edition mode
   switch (edition_mode) {
-    case EditionMode.Drag:
-      drag_end()
+    case EditionMode.Pan:
+      pan_end()
       break
     case EditionMode.Connect:
       connect_end()

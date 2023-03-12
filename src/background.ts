@@ -1,5 +1,5 @@
 import { background_ctx, static_background_ctx } from './canvas'
-import { block_size, dot_size, cross_line_width, cross_line_size, pixel_ratio } from './config'
+import { block_size, dot_size, cross_width, cross_size, pixel_ratio } from './config'
 import { viewbox_pos } from './viewbox'
 import { clear_canvas, } from './utils/rendering'
 import { Vector } from './utils/vector'
@@ -55,16 +55,16 @@ export function render_background() {
 
     // draw the center cross on the canvas
     background_ctx.strokeStyle = 'hsl(240, 7%, 20%)'
-    background_ctx.lineWidth = cross_line_width
+    background_ctx.lineWidth = cross_width
     background_ctx.lineCap = 'round'
 
     background_ctx.beginPath()
-    background_ctx.moveTo(cross_pos.x - cross_line_size, cross_pos.y)
-    background_ctx.lineTo(cross_pos.x + cross_line_size, cross_pos.y)
+    background_ctx.moveTo(cross_pos.x - cross_size, cross_pos.y)
+    background_ctx.lineTo(cross_pos.x + cross_size, cross_pos.y)
     background_ctx.stroke()
 
     background_ctx.beginPath()
-    background_ctx.moveTo(cross_pos.x, cross_pos.y - cross_line_size)
-    background_ctx.lineTo(cross_pos.x, cross_pos.y + cross_line_size)
+    background_ctx.moveTo(cross_pos.x, cross_pos.y - cross_size)
+    background_ctx.lineTo(cross_pos.x, cross_pos.y + cross_size)
     background_ctx.stroke()
 }
