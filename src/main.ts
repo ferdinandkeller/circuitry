@@ -7,7 +7,7 @@ import { resize_canvas, renderer } from './canvas'
 import { render_background, render_static_background } from './background'
 import { pan_start, pan_move, pan_end } from './modes/pan'
 import { connect_start, connect_move, connect_end } from './modes/connect'
-import { update_mouse_pos } from './mouse'
+import { update_mouse_pos } from './globals/mouse'
 
 // define a full render function
 function full_render() {

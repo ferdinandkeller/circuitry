@@ -1,8 +1,8 @@
-import { viewbox_pos } from '../viewbox'
-import { render_background } from '../background'
-import { renderer } from '../canvas'
-import { Vector } from '../utils/vector'
-import { mouse_world_pos } from '../mouse'
+import { viewbox_pos } from '@/globals/viewbox'
+import { render_background } from '@/background'
+import { renderer } from '@/canvas'
+import { Vector } from '@/utils/vector'
+import { mouse_world_pos } from '@/globals/mouse'
 
 
 // set viewbox panning state variables

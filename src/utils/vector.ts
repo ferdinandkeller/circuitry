@@ -1,4 +1,4 @@
-import { viewbox_pos } from '../viewbox'
+import { viewbox_pos } from '@/globals/viewbox'
 import { modulo_ceiling, modulo_rounding, modulo_flooring, mod } from './math'
 
 // define a vector struct

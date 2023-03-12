@@ -1,6 +1,6 @@
 import { background_ctx, static_background_ctx } from './canvas'
 import { block_size, dot_size, cross_width, cross_size, pixel_ratio } from './editor/configuration'
-import { viewbox_pos } from './viewbox'
+import { viewbox_pos } from './globals/viewbox'
 import { clear_canvas, } from './utils/rendering'
 import { Vector } from './utils/vector'
 

@@ -1,6 +1,6 @@
 import { pixel_ratio, block_size } from './editor/configuration'
 import { modulo_ceiling } from './utils/math'
-import { viewbox_pos } from './viewbox'
+import { viewbox_pos } from './globals/viewbox'
 
 // load the renderer div which wraps all the canvas
 let maybe_renderer = document.getElementById('renderer') as HTMLDivElement | null
