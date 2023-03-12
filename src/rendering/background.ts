@@ -1,7 +1,7 @@
 import { background_ctx, static_background_ctx } from './canvas'
 import { dot_size, pixel_ratio } from '@/editor/configuration'
 import { viewbox_pos } from '@/globals/viewbox'
-import { clear_canvas, render_dot, render_cross } from '@/utils/rendering'
+import { clear_canvas, render_background_dot, render_cross } from '@/utils/rendering'
 import { Vector } from '@/utils/vector'
 
 /**
@@ -36,7 +36,7 @@ export function render_static_background() {
     // draw the dots
     for (let x = 0; x < width_point_count; x++) {
         for (let y = 0; y < height_point_count; y++) {
-            render_dot(static_background_ctx, new Vector(x, y))
+            render_background_dot(static_background_ctx, new Vector(x * dot_size, y * dot_size))
         }
     }
 }

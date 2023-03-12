@@ -1,9 +1,8 @@
 import { connections_ctx, renderer } from '@/rendering/canvas'
-import { clear_canvas } from '@/utils/rendering'
+import { clear_canvas, render_connection_dot } from '@/utils/rendering'
 import { Vector } from '@/utils/vector'
-import { viewbox_pos } from '@/globals/viewbox'
 import { cursor_world_pos, cursor_world_pos_dot } from '@/globals/cursor'
-import { dot_radius, dot_size, connection_turn_threshold } from '@/editor/configuration'
+import { dot_size, connection_line_width, connection_turn_threshold } from '@/editor/configuration'
 
 // set connecting state variables
 let is_connecting = false
@@ -54,9 +53,7 @@ export function connect_start() {
 
     // draw the start point
     connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
-    connections_ctx.beginPath()
-    connections_ctx.arc(connection_points[0].x - viewbox_pos.x, connection_points[0].y - viewbox_pos.y, 2 * dot_radius, 0, 2 * Math.PI)
-    connections_ctx.fill()
+    render_connection_dot(connections_ctx, connection_points[0].to_screen())
 }
 
 export function connect_move() {
@@ -115,7 +112,7 @@ export function connect_move() {
     // set the line styles
     connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
     connections_ctx.strokeStyle = 'hsl(240, 7%, 20%)'
-    connections_ctx.lineWidth = dot_radius * 2
+    connections_ctx.lineWidth = connection_line_width
     connections_ctx.lineCap = 'butt'
 
     // get the first point of the line
@@ -138,9 +135,7 @@ export function connect_move() {
         let point_screen = world_point.to_screen()
 
         // draw the point
-        connections_ctx.beginPath()
-        connections_ctx.arc(point_screen.x, point_screen.y, 2 * dot_radius, 0, 2 * Math.PI)
-        connections_ctx.fill()
+        render_connection_dot(connections_ctx, point_screen)
     }
 }
 

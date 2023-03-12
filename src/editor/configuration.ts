@@ -13,7 +13,7 @@ export let dot_size = 20
 /**
  * The size of one grid dot in pixels.
  */
-export let dot_radius = 2
+export let dot_diameter = 2
 /**
  * The width of a cross in pixels.
  */
@@ -21,7 +21,15 @@ export let cross_width = 2
 /**
  * The size of a cross in pixels.
  */
-export let cross_length = 4
+export let cross_length = 2 * dot_diameter
+/**
+ * The size of the connection line in pixels.
+ */
+export let connection_line_width = 2 * dot_diameter
+/**
+ * The size of the connection dot in pixels.
+ */
+export let connection_dot_diameter = 4 * dot_diameter
 
 // UX parameters
 /**
