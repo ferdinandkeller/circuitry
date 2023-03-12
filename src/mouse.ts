@@ -1,5 +1,5 @@
 import { Vector } from './utils/vector'
-import { block_size } from './config'
+import { block_size } from './editor/configuration'
 
 // define a variable to store the mouse's position
 // this position is relative to the screen

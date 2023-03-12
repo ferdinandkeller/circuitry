@@ -1,5 +1,5 @@
-import { enter_pan_mode, exit_pan_mode } from './pan'
-import { enter_connect_mode, exit_connect_mode } from './connect'
+import { enter_pan_mode, exit_pan_mode } from '../pan'
+import { enter_connect_mode, exit_connect_mode } from '../connect'
 
 // define the edition mode valid states
 export enum EditionMode {

@@ -1,4 +1,4 @@
-import { pixel_ratio, block_size } from './config'
+import { pixel_ratio, block_size } from './editor/configuration'
 import { modulo_ceiling } from './utils/math'
 import { viewbox_pos } from './viewbox'
 

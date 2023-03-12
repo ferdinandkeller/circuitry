@@ -3,7 +3,7 @@ import { clear_canvas } from './utils/rendering'
 import { Vector } from './utils/vector'
 import { viewbox_pos } from './viewbox'
 import { mouse_world_pos, mouse_world_pos_block } from './mouse'
-import { dot_size, block_size, connection_turn_threshold } from './config'
+import { dot_size, block_size, connection_turn_threshold } from './editor/configuration'
 
 // set connecting state variables
 let is_connecting = false

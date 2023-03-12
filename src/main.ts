@@ -2,7 +2,7 @@
 import './style.scss'
 
 // import ui logic
-import { EditionMode, edition_mode } from './editor_logic'
+import { EditionMode, edition_mode } from './editor/logic'
 import { resize_canvas, renderer } from './canvas'
 import { render_background, render_static_background } from './background'
 import { pan_start, pan_move, pan_end } from './pan'
