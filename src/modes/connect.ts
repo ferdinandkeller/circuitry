@@ -3,7 +3,7 @@ import { clear_canvas } from '@/utils/rendering'
 import { Vector } from '@/utils/vector'
 import { viewbox_pos } from '@/globals/viewbox'
 import { cursor_world_pos, cursor_world_pos_dot } from '@/globals/cursor'
-import { dot_size, block_size, connection_turn_threshold } from '@/editor/configuration'
+import { dot_radius, dot_size, connection_turn_threshold } from '@/editor/configuration'
 
 // set connecting state variables
 let is_connecting = false
@@ -55,7 +55,7 @@ export function connect_start() {
     // draw the start point
     connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
     connections_ctx.beginPath()
-    connections_ctx.arc(connection_points[0].x - viewbox_pos.x, connection_points[0].y - viewbox_pos.y, 2 * dot_size, 0, 2 * Math.PI)
+    connections_ctx.arc(connection_points[0].x - viewbox_pos.x, connection_points[0].y - viewbox_pos.y, 2 * dot_radius, 0, 2 * Math.PI)
     connections_ctx.fill()
 }
 
@@ -76,9 +76,9 @@ export function connect_move() {
     if (orientation === Orientation.Unknown) {
         // check if we are more than some distance away from the start point
         // if so, set the orientation
-        if (delta.x >= connection_turn_threshold * block_size) {
+        if (delta.x >= connection_turn_threshold * dot_size) {
             orientation = Orientation.Horizontal
-        } else if (delta.y >= connection_turn_threshold * block_size) {
+        } else if (delta.y >= connection_turn_threshold * dot_size) {
             orientation = Orientation.Vertical
         }
         // if the starting orientation is still undetermined,
@@ -91,7 +91,7 @@ export function connect_move() {
         // if in horizontal mode, restrain the vertical movement
         // but if the mouse is more than some distance away from x axis, turn
         end_point_world_pos.y = before_end_point_world_pos.y
-        if (delta.y > connection_turn_threshold * block_size) {
+        if (delta.y > connection_turn_threshold * dot_size) {
             connection_points.push(end_point_world_pos.copy())
             orientation = Orientation.Vertical
         }
@@ -100,7 +100,7 @@ export function connect_move() {
         // if in vertical mode, restrain the horizontal movement
         // but if the mouse is more than some distance away from y axis, turn
         end_point_world_pos.x = before_end_point_world_pos.x
-        if (delta.x > connection_turn_threshold * block_size) {
+        if (delta.x > connection_turn_threshold * dot_size) {
             connection_points.push(end_point_world_pos.copy())
             orientation = Orientation.Horizontal
         }
@@ -115,7 +115,7 @@ export function connect_move() {
     // set the line styles
     connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
     connections_ctx.strokeStyle = 'hsl(240, 7%, 20%)'
-    connections_ctx.lineWidth = dot_size * 2
+    connections_ctx.lineWidth = dot_radius * 2
     connections_ctx.lineCap = 'butt'
 
     // get the first point of the line
@@ -139,7 +139,7 @@ export function connect_move() {
 
         // draw the point
         connections_ctx.beginPath()
-        connections_ctx.arc(point_screen.x, point_screen.y, 2 * dot_size, 0, 2 * Math.PI)
+        connections_ctx.arc(point_screen.x, point_screen.y, 2 * dot_radius, 0, 2 * Math.PI)
         connections_ctx.fill()
     }
 }

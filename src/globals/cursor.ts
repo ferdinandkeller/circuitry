@@ -1,5 +1,5 @@
 import { Vector } from '@/utils/vector'
-import { block_size } from '@/editor/configuration'
+import { dot_size } from '@/editor/configuration'
 
 /**
  * Represents the cursor's position.
@@ -42,14 +42,14 @@ export function update_cursor_pos(cursor_screen_pos_x: number, cursor_screen_pos
     // we can get the mouse position relative to the world
     cursor_world_pos = cursor_screen_pos.to_world()
 
-    // to get the mouse world position rounded to the nearest block,
+    // to get the mouse world position rounded to the nearest dot,
     // we simply round the world position
-    cursor_world_pos_dot = cursor_world_pos.modulo_rounding(block_size)
+    cursor_world_pos_dot = cursor_world_pos.modulo_rounding(dot_size)
     
-    // to get the mouse screen position rounded to the nearest block,
-    // we can't simply round the screen position, because it would round to the nearest block
+    // to get the mouse screen position rounded to the nearest dot,
+    // we can't simply round the screen position, because it would round to the nearest dot
     // base on the top left corner of the screen
-    // so what we do is we convert the screen position to the world position, round it to the nearest block,
+    // so what we do is we convert the screen position to the world position, round it to the nearest dot,
     // and then convert it back to the screen position
     // we already did the first two steps, so we just need to convert it back to the screen position
     cursor_screen_pos_dot = cursor_world_pos_dot.to_screen()

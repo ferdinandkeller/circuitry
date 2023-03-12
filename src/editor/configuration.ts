@@ -9,11 +9,11 @@ export let pixel_ratio = window.devicePixelRatio
 /**
  * The size of the grid in pixels.
  */
-export let block_size = 20
+export let dot_size = 20
 /**
  * The size of one grid dot in pixels.
  */
-export let dot_size = 2
+export let dot_radius = 2
 /**
  * The width of a cross in pixels.
  */
@@ -21,7 +21,7 @@ export let cross_width = 2
 /**
  * The size of a cross in pixels.
  */
-export let cross_size = 4
+export let cross_length = 4
 
 // UX parameters
 /**
