@@ -1,41 +1,52 @@
 import { enter_pan_mode, exit_pan_mode } from '@/modes/pan'
 import { enter_connect_mode, exit_connect_mode } from '@/modes/connect'
+import { renderer } from '@/canvas'
 
-// define the edition mode valid states
+/**
+ * Valid edition modes.
+ */
 export enum EditionMode {
-  None,     // mode where you can't do anything
-  Pan,     // mode where you can pan the canvas
-  Connect,  // mode where you can connect modules
+  NONE = 'none',        // mode where you can't do anything
+  PAN = 'pan',          // mode where you can pan the canvas
+  CONNECT = 'connect',  // mode where you can connect modules
 }
 
-// create a variable to store the active edition mode
-export let edition_mode = EditionMode.None
+/**
+ * The currently active edition mode.
+ * 
+ * @default EditionMode.NONE
+ */
+export let active_edition_mode = EditionMode.NONE
 
-// define a method to exit the active edition mode
+/**
+ * Exits the active edition mode.
+ */
 function exit_active_mode() {
-    if (edition_mode === EditionMode.Pan) exit_pan_mode()
-    else if (edition_mode === EditionMode.Connect) exit_connect_mode()
+    if (active_edition_mode === EditionMode.PAN) exit_pan_mode()
+    else if (active_edition_mode === EditionMode.CONNECT) exit_connect_mode()
 }
 
 // shortcuts to switch between edition modes
-addEventListener('keydown', (event: KeyboardEvent) => {
+// we add the event listener to the renderer, because it's the element that contains the canvas
+// we don't want to trigger the shortcuts when the mouse is outside the editor
+renderer.addEventListener('keydown', (event: KeyboardEvent) => {
   // enable none mode
-  if ((event.key === 'Escape' || event.key === 'n') && edition_mode !== EditionMode.None) {
+  if ((event.key === 'Escape' || event.key === 'n') && active_edition_mode !== EditionMode.NONE) {
     exit_active_mode()
-    edition_mode = EditionMode.None
+    active_edition_mode = EditionMode.NONE
   }
 
   // enable pan mode
-  if (event.key === 'd' && edition_mode !== EditionMode.Pan) {
+  else if (event.key === 'd' && active_edition_mode !== EditionMode.PAN) {
     exit_active_mode()
-    edition_mode = EditionMode.Pan
+    active_edition_mode = EditionMode.PAN
     enter_pan_mode()
   }
 
   // enable connect mode
-  if (event.key === 'c' && edition_mode !== EditionMode.Connect) {
+  else if (event.key === 'c' && active_edition_mode !== EditionMode.CONNECT) {
     exit_active_mode()
-    edition_mode = EditionMode.Connect
+    active_edition_mode = EditionMode.CONNECT
     enter_connect_mode()
   }
 })

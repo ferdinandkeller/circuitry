@@ -2,7 +2,7 @@
 import './style.scss'
 
 // import ui logic
-import { EditionMode, edition_mode } from './editor/logic'
+import { EditionMode, active_edition_mode } from './editor/logic'
 import { resize_canvas, renderer } from './canvas'
 import { render_background, render_static_background } from './background'
 import { pan_start, pan_move, pan_end } from './modes/pan'
@@ -33,11 +33,11 @@ renderer.addEventListener('mousedown', (mouse_event: MouseEvent) => {
   update_cursor_pos(mouse_event.clientX, mouse_event.clientY)
   
   // update depending on the active edition mode
-  switch (edition_mode) {
-    case EditionMode.Pan:
+  switch (active_edition_mode) {
+    case EditionMode.PAN:
       pan_start()
       break
-    case EditionMode.Connect:
+    case EditionMode.CONNECT:
       connect_start()
       break
   }
@@ -48,11 +48,11 @@ renderer.addEventListener('mousemove', (mouse_event: MouseEvent) => {
   update_cursor_pos(mouse_event.clientX, mouse_event.clientY)
   
   // update depending on the active edition mode
-  switch (edition_mode) {
-    case EditionMode.Pan:
+  switch (active_edition_mode) {
+    case EditionMode.PAN:
       pan_move()
       break
-    case EditionMode.Connect:
+    case EditionMode.CONNECT:
       connect_move()
       break
   }
@@ -63,11 +63,11 @@ renderer.addEventListener('mouseup', (mouse_event: MouseEvent) => {
   update_cursor_pos(mouse_event.clientX, mouse_event.clientY)
   
   // update depending on the active edition mode
-  switch (edition_mode) {
-    case EditionMode.Pan:
+  switch (active_edition_mode) {
+    case EditionMode.PAN:
       pan_end()
       break
-    case EditionMode.Connect:
+    case EditionMode.CONNECT:
       connect_end()
       break
   }
