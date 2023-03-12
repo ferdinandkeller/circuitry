@@ -2,7 +2,7 @@ import { connections_ctx, renderer } from '@/canvas'
 import { clear_canvas } from '@/utils/rendering'
 import { Vector } from '@/utils/vector'
 import { viewbox_pos } from '@/globals/viewbox'
-import { mouse_world_pos, mouse_world_pos_block } from '@/globals/mouse'
+import { cursor_world_pos, cursor_world_pos_dot } from '@/globals/cursor'
 import { dot_size, block_size, connection_turn_threshold } from '@/editor/configuration'
 
 // set connecting state variables
@@ -46,8 +46,8 @@ export function connect_start() {
     orientation = Orientation.Unknown
 
     // add the start and end points to the connection points
-    connection_points.push(mouse_world_pos_block.copy())
-    connection_points.push(mouse_world_pos_block.copy())
+    connection_points.push(cursor_world_pos_dot.copy())
+    connection_points.push(cursor_world_pos_dot.copy())
 
     // clear the canvas
     clear_canvas(connections_ctx)
@@ -67,10 +67,10 @@ export function connect_move() {
     let before_end_point_world_pos = connection_points[connection_points.length - 2]
 
     // compute the delta between the start point and the current mouse position
-    let delta = mouse_world_pos.sub(before_end_point_world_pos).abs()
+    let delta = cursor_world_pos.sub(before_end_point_world_pos).abs()
 
     // update the end point
-    end_point_world_pos.set(mouse_world_pos_block)
+    end_point_world_pos.set(cursor_world_pos_dot)
 
     // find the orientation of the connection
     if (orientation === Orientation.Unknown) {
