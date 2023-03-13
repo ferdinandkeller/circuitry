@@ -1,7 +1,7 @@
 import { background_ctx, static_background_ctx } from './canvas'
-import { dot_size, pixel_ratio } from '@/editor/configuration'
+import { dot_size, pixel_ratio, dot_diameter } from '@/editor/configuration'
 import { viewbox_pos } from '@/globals/viewbox'
-import { clear_canvas, render_background_dot, render_cross } from '@/utils/rendering'
+import { clear_context, render_circle, render_cross } from '@/utils/rendering'
 import { Vector } from '@/utils/vector'
 
 /**
@@ -28,7 +28,7 @@ export function render_static_background() {
     let height_point_count = static_background_ctx.canvas.height / pixel_ratio / dot_size + 1
 
     // clear the static background
-    clear_canvas(static_background_ctx)
+    clear_context(static_background_ctx)
 
     // set the dots color
     static_background_ctx.fillStyle = 'hsl(240, 7%, 85%)'
@@ -36,7 +36,7 @@ export function render_static_background() {
     // draw the dots
     for (let x = 0; x < width_point_count; x++) {
         for (let y = 0; y < height_point_count; y++) {
-            render_background_dot(static_background_ctx, new Vector(x * dot_size, y * dot_size))
+            render_circle(static_background_ctx, new Vector(x * dot_size, y * dot_size), dot_diameter)
         }
     }
 }
@@ -51,7 +51,7 @@ export function render_background() {
     let viewbox_pos_neg_modulo = viewbox_pos.neg().mod(dot_size)
 
     // clear the background
-    clear_canvas(background_ctx)
+    clear_context(background_ctx)
 
     // draw the static background on the visible background
     background_ctx.drawImage(

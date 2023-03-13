@@ -1,5 +1,5 @@
 import { active_connection_ctx, renderer } from '@/rendering/canvas'
-import { clear_canvas, render_connection_dot } from '@/utils/rendering'
+import { clear_context } from '@/utils/rendering'
 import { cursor_world_pos, cursor_world_pos_dot } from '@/globals/cursor'
 import { dot_size, connection_turn_threshold } from '@/editor/configuration'
 import { Connection } from '@/utils/connection'
@@ -23,7 +23,7 @@ export function enter_connect_mode() {
 export function exit_connect_mode() {
     // leave the connect mode
     is_connecting = false
-    clear_canvas(active_connection_ctx)
+    clear_context(active_connection_ctx)
 
     // remove the mode class from the renderer
     renderer.classList.remove('connect-mode')
@@ -45,11 +45,10 @@ export function connect_start() {
     connection.points.push(cursor_world_pos_dot.copy())
 
     // clear the canvas
-    clear_canvas(active_connection_ctx)
+    clear_context(active_connection_ctx)
 
     // draw the start point
-    active_connection_ctx.fillStyle = 'hsl(240, 7%, 20%)'
-    render_connection_dot(active_connection_ctx, connection.points[0].to_screen())
+    connection.render(active_connection_ctx)    
 }
 
 export function connect_move() {
@@ -105,7 +104,7 @@ export function connect_move() {
     connection.simplify_connection()
 
     // clear the canvas & render the connection
-    clear_canvas(active_connection_ctx)
+    clear_context(active_connection_ctx)
     connection.render(active_connection_ctx)
 }
 
@@ -114,5 +113,5 @@ export function connect_end() {
     is_connecting = false
 
     // clear the canvas
-    clear_canvas(active_connection_ctx)
+    clear_context(active_connection_ctx)
 }

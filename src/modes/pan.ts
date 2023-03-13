@@ -3,6 +3,7 @@ import { render_background } from '@/rendering/background'
 import { renderer } from '@/rendering/canvas'
 import { Vector } from '@/utils/vector'
 import { cursor_world_pos } from '@/globals/cursor'
+import { render_components } from '@/rendering/components'
 
 
 // set viewbox panning state variables
@@ -42,7 +43,10 @@ export function pan_move() {
     let pan_end_viewbox_pos = viewbox_pos.sub(delta_pos)
     viewbox_pos.set(pan_end_viewbox_pos)
 
+    // trigger a background render
     render_background()
+    // trigger a component render
+    render_components()
 }
 
 export function pan_end() {

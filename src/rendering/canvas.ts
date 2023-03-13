@@ -1,5 +1,6 @@
 import { pixel_ratio, dot_size } from '@/editor/configuration'
 import { modulo_ceiling } from '@/utils/math'
+import { free_canvas } from '@/utils/rendering'
 import { viewbox_pos } from '@/globals/viewbox'
 
 // load the renderer div which wraps all the canvas
@@ -47,36 +48,48 @@ let previous_height = 0
 
 // make sure to resize the canvas when the window is resized
 export function resize_canvas() {
-  // resize the background canvas
-  background_ctx.canvas.width = pixel_ratio * renderer.clientWidth
-  background_ctx.canvas.height = pixel_ratio * renderer.clientHeight
-  background_ctx.scale(pixel_ratio, pixel_ratio)
-
-  // resize the static background canvas
-  static_background_ctx.canvas.width = pixel_ratio * (modulo_ceiling(renderer.clientWidth, dot_size) + dot_size)
-  static_background_ctx.canvas.height = pixel_ratio * (modulo_ceiling(renderer.clientHeight, dot_size) + dot_size)
-  static_background_ctx.scale(pixel_ratio, pixel_ratio)
-
-  // resize the active-connection canvas
-  active_connection_ctx.canvas.width = pixel_ratio * renderer.clientWidth
-  active_connection_ctx.canvas.height = pixel_ratio * renderer.clientHeight
-  active_connection_ctx.scale(pixel_ratio, pixel_ratio)
-
-  // resize the connections canvas
-  connections_ctx.canvas.width = pixel_ratio * renderer.clientWidth
-  connections_ctx.canvas.height = pixel_ratio * renderer.clientHeight
-  connections_ctx.scale(pixel_ratio, pixel_ratio)
-
-  // resize the components canvas
-  components_ctx.canvas.width = pixel_ratio * renderer.clientWidth
-  components_ctx.canvas.height = pixel_ratio * renderer.clientHeight
-  components_ctx.scale(pixel_ratio, pixel_ratio)
-
-  // update the viewbox to keep the center of the screen still in the center of the screen
-  let delta_width = renderer.clientWidth - previous_width
-  let delta_height = renderer.clientHeight - previous_height
-  viewbox_pos.x -= delta_width / 2
-  viewbox_pos.y -= delta_height / 2
-  previous_width = renderer.clientWidth
-  previous_height = renderer.clientHeight
+    // resize the background canvas
+    background_ctx.canvas.width = pixel_ratio * renderer.clientWidth
+    background_ctx.canvas.height = pixel_ratio * renderer.clientHeight
+    background_ctx.scale(pixel_ratio, pixel_ratio)
+    
+    // resize the static background canvas
+    static_background_ctx.canvas.width = pixel_ratio * (modulo_ceiling(renderer.clientWidth, dot_size) + dot_size)
+    static_background_ctx.canvas.height = pixel_ratio * (modulo_ceiling(renderer.clientHeight, dot_size) + dot_size)
+    static_background_ctx.scale(pixel_ratio, pixel_ratio)
+    
+    // resize the active-connection canvas
+    active_connection_ctx.canvas.width = pixel_ratio * renderer.clientWidth
+    active_connection_ctx.canvas.height = pixel_ratio * renderer.clientHeight
+    active_connection_ctx.scale(pixel_ratio, pixel_ratio)
+    
+    // resize the connections canvas
+    connections_ctx.canvas.width = pixel_ratio * renderer.clientWidth
+    connections_ctx.canvas.height = pixel_ratio * renderer.clientHeight
+    connections_ctx.scale(pixel_ratio, pixel_ratio)
+    
+    // resize the components canvas
+    components_ctx.canvas.width = pixel_ratio * renderer.clientWidth
+    components_ctx.canvas.height = pixel_ratio * renderer.clientHeight
+    components_ctx.scale(pixel_ratio, pixel_ratio)
+    
+    // update the viewbox to keep the center of the screen still in the center of the screen
+    let delta_width = renderer.clientWidth - previous_width
+    let delta_height = renderer.clientHeight - previous_height
+    viewbox_pos.x -= delta_width / 2
+    viewbox_pos.y -= delta_height / 2
+    previous_width = renderer.clientWidth
+    previous_height = renderer.clientHeight
 }
+
+// canvas in safari are quite buggy
+// when the window is reloaded, the canvas are deleted but the memory is not freed correctly
+// this is a workaround to free the memory, where before the window is unloaded,
+// the canvas are resized to be 0x0, which frees the memory
+window.addEventListener('beforeunload', () => {
+    free_canvas(background_canvas)
+    free_canvas(static_background_canvas)
+    free_canvas(connections_canvas)
+    free_canvas(active_connection_canvas)
+    free_canvas(components_canvas)
+})

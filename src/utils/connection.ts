@@ -1,8 +1,9 @@
 import { Vector } from './vector'
-import { render_connection_dot } from './rendering'
+import { render_circle } from './rendering'
 import { connection_line_width } from '@/editor/configuration'
 import { Orientation } from '@/utils/orientation'
 import { mod } from './math'
+import { connection_dot_diameter } from '@/editor/configuration'
 
 export class Connection {
     points: Vector[]
@@ -167,12 +168,14 @@ export class Connection {
         ctx.stroke()
 
         // draw the points
+        ctx.beginPath()
         for (let point_world of this.points) {
             // convert the point to screen coordinates
             let point_screen = point_world.to_screen()
 
             // draw the point
-            render_connection_dot(ctx, point_screen)
+            render_circle(ctx, point_screen, connection_dot_diameter)
         }
+        ctx.fill()
     }
 }
