@@ -17,7 +17,7 @@ export let dot_diameter = 2
 /**
  * The width of a cross in pixels.
  */
-export let cross_width = 2
+export let cross_width = dot_diameter
 /**
  * The size of a cross in pixels.
  */
