@@ -21,7 +21,10 @@
             "@/*": [
                 "./src/*"
             ]
-        }
+        },
+        "types": [
+            "css-font-loading-module"
+        ]
     },
     "include": [
         "src"
