@@ -1,4 +1,4 @@
-import { connections_ctx, renderer } from '@/rendering/canvas'
+import { active_connection_ctx, renderer } from '@/rendering/canvas'
 import { clear_canvas, render_connection_dot } from '@/utils/rendering'
 import { cursor_world_pos, cursor_world_pos_dot } from '@/globals/cursor'
 import { dot_size, connection_turn_threshold } from '@/editor/configuration'
@@ -23,7 +23,7 @@ export function enter_connect_mode() {
 export function exit_connect_mode() {
     // leave the connect mode
     is_connecting = false
-    clear_canvas(connections_ctx)
+    clear_canvas(active_connection_ctx)
 
     // remove the mode class from the renderer
     renderer.classList.remove('connect-mode')
@@ -45,11 +45,11 @@ export function connect_start() {
     connection.points.push(cursor_world_pos_dot.copy())
 
     // clear the canvas
-    clear_canvas(connections_ctx)
+    clear_canvas(active_connection_ctx)
 
     // draw the start point
-    connections_ctx.fillStyle = 'hsl(240, 7%, 20%)'
-    render_connection_dot(connections_ctx, connection.points[0].to_screen())
+    active_connection_ctx.fillStyle = 'hsl(240, 7%, 20%)'
+    render_connection_dot(active_connection_ctx, connection.points[0].to_screen())
 }
 
 export function connect_move() {
@@ -65,7 +65,8 @@ export function connect_move() {
     // update the end point
     end_point_world_pos.set(cursor_world_pos_dot)
 
-    // find the orientation of the connection
+    // try to find the orientation of the connection
+    // until it is properly determined, we prevent rendering anything
     if (orientation === Orientation.Unknown) {
         // check if we are more than some distance away from the start point
         // if so, set the orientation
@@ -73,10 +74,11 @@ export function connect_move() {
             orientation = Orientation.Horizontal
         } else if (delta.y >= connection_turn_threshold * dot_size) {
             orientation = Orientation.Vertical
+        } else {
+            // if the starting orientation is still undetermined,
+            // we prevent rendering anything by returning early
+            return
         }
-        // if the starting orientation is still undetermined,
-        // we prevent rendering anything by returning early
-        return
     }
     
     // depending on the orientation, detect if we need to turn
@@ -103,8 +105,8 @@ export function connect_move() {
     connection.simplify_connection()
 
     // clear the canvas & render the connection
-    clear_canvas(connections_ctx)
-    connection.render(connections_ctx)
+    clear_canvas(active_connection_ctx)
+    connection.render(active_connection_ctx)
 }
 
 export function connect_end() {
@@ -112,5 +114,5 @@ export function connect_end() {
     is_connecting = false
 
     // clear the canvas
-    clear_canvas(connections_ctx)
+    clear_canvas(active_connection_ctx)
 }

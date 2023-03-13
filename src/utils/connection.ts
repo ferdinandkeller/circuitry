@@ -153,11 +153,11 @@ export class Connection {
         ctx.lineCap = 'butt'
 
         // get the first point of the line
-        let line_first_point_screen = this.points[0].to_screen()
+        let first_point_screen = this.points[0].to_screen()
 
         // draw the lines
         ctx.beginPath()
-        ctx.moveTo(line_first_point_screen.x, line_first_point_screen.y)
+        ctx.moveTo(first_point_screen.x, first_point_screen.y)
         for (let point_index = 1; point_index < this.points.length; point_index++) {
             // convert the point to screen coordinates
             let point_screen = this.points[point_index].to_screen()
