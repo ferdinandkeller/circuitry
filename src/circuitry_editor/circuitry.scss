@@ -9,6 +9,10 @@
         cursor: grab;
     }
 
+    &.drag-mode {
+        cursor: move;
+    }
+
     .renderer {
         width: 100%;
         height: 100%;

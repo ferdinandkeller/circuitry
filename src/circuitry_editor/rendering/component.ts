@@ -24,6 +24,8 @@ export class Component {
     component_cache: Canvas
     shadow_cache: Canvas
 
+    animation_frame: number = 0
+
     is_hovered_cache: boolean = false
 
     constructor(circuitry_editor: CircuitryEditor, name: string, position: Vector) {
@@ -35,7 +37,7 @@ export class Component {
         this.name = name
 
         this.width = 6
-        this.height = Math.max(this.inputs, this.outputs) + 2
+        this.height = 2 * Math.max(this.inputs, this.outputs)
         this.shadow_radius = 1.5
         this.shadow_delta_x = 0
         this.shadow_delta_y = 1
@@ -68,9 +70,18 @@ export class Component {
         return this.is_hovered_cache
     }
 
-    hover_animation() {
-        console.log('bite')
-    }
+    // cool_animation() {
+    //     console.log("animation")
+
+    //     this.animation_frame -= 1
+    //     if (this.animation_frame <= 0) return
+    //     requestAnimationFrame(this.cool_animation.bind(this))
+    // }
+
+    // hover_animation() {
+    //     this.animation_frame = 60
+    //     this.cool_animation()
+    // }
 
     /**
      * Render the component using the cached canvas.
@@ -100,6 +111,42 @@ export class Component {
         this.component_cache.ctx.lineWidth = this.border_radius
         this.component_cache.ctx.strokeStyle = 'hsl(240, 20%, 92%)'
         this.component_cache.ctx.stroke()
+        this.component_cache.ctx.restore()
+
+        // render the inputs & outputs
+        this.component_cache.ctx.save()
+
+        this.component_cache.ctx.fillStyle = 'hsl(240, 20%, 92%)'
+        let delta = this.circuitry_editor.configuration.grid_size * 2
+
+        let y = this.circuitry_editor.configuration.grid_size * (Math.max(this.inputs, this.outputs) - this.inputs + 1)
+
+        for (let i = 0; i < this.inputs; i++) {
+            this.component_cache.ctx.beginPath()
+            this.component_cache.ctx.arc(
+                this.border_radius / 2,
+                this.border_radius / 2 + y,
+                this.border_radius * 2,
+                -Math.PI / 2, Math.PI / 2
+            )
+            this.component_cache.ctx.fill()
+            y += delta
+        }
+
+        y = this.circuitry_editor.configuration.grid_size * (Math.max(this.inputs, this.outputs) - this.outputs + 1)
+
+        for (let i = 0; i < this.outputs; i++) {
+            this.component_cache.ctx.beginPath()
+            this.component_cache.ctx.arc(
+                this.circuitry_editor.configuration.grid_size * this.width + this.border_radius / 2,
+                this.border_radius / 2 + y,
+                this.border_radius * 2,
+                Math.PI / 2, -Math.PI / 2
+            )
+            this.component_cache.ctx.fill()
+            y += delta
+        }
+
         this.component_cache.ctx.restore()
 
         // render the name

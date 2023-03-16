@@ -8,13 +8,13 @@ export class PanMode extends Child {
     pan_start_viewbox_pos: Vector = Vector.zero()
 
     // mode switch handlers
-    enter_pan_mode() {
+    enter_pan() {
         // add the mode class to the editor div
         this.circuitry_editor.circuitry_editor_div.classList.add('pan-mode')
         // .classList.add('pan-mode')
     }
 
-    exit_pan_mode() {
+    exit_pan() {
         // leave the panning mode
         if (this.is_panning) { this.is_panning = false }
 
