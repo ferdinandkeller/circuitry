@@ -2,12 +2,21 @@
 <html lang="en">
 
 <head>
+    <!-- set meta informations about the page -->
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="author" content="Ferdinand Keller" />
+    <meta name="description" content="Circuitry is a web-based logic gate emulator" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- import DM Mono font from googlefont -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- set the page's icon -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- set the page's title -->
     <title>Circuitry</title>
 </head>
 
@@ -15,16 +24,14 @@
     <!-- div containing the entire app -->
     <div id="app">
         <!-- div containing the first circuitry editor -->
-        <div id="editor-1">
-        </div>
+        <div id="editor-1"></div>
         <!-- div containing the second circuitry editor -->
-        <div id="editor-2">
-        </div>
+        <div id="editor-2"></div>
     </div>
 
 </body>
 
-<!-- the code of the renderer -->
-<script type="module" src="/src/main.ts"></script>
+<!-- the code of the app -->
+<script type="module" src="/src/app.ts"></script>
 
 </html>
