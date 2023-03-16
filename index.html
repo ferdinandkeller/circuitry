@@ -2,24 +2,29 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Circuitry</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <title>Circuitry</title>
 </head>
 
 <body>
-  <div id="app">
-    <div id="editor">
-      <div id="renderer">
-        <canvas id="background"></canvas>
-        <canvas id="connections"></canvas>
-        <canvas id="active-connection"></canvas>
-        <canvas id="components"></canvas>
-      </div>
+    <!-- div containing the entire app -->
+    <div id="app">
+        <!-- div containing the first circuitry editor -->
+        <div id="editor-1">
+        </div>
+        <!-- div containing the second circuitry editor -->
+        <div id="editor-2">
+        </div>
     </div>
-  </div>
-  <script type="module" src="/src/main.ts"></script>
+
 </body>
+
+<!-- the code of the renderer -->
+<script type="module" src="/src/main.ts"></script>
 
 </html>

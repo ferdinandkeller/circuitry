@@ -2,6 +2,7 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  font-size: 10px;
 
   color-scheme: light;
   color: hsl(240, 5%, 10%);
@@ -16,7 +17,8 @@
 body {
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  // overflow: hidden;
+  font-size: 1.6rem;
 }
 
 * {
@@ -28,31 +30,12 @@ body {
 #app {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: row;
+  font-family: "DM Mono", monospace;
 
-  #editor {
+  &>* {
     width: 100%;
     height: 100%;
-
-    #renderer {
-      width: 100%;
-      height: 100%;
-      position: relative;
-
-      &.pan-mode {
-        cursor: grab;
-      }
-
-      &.connect-mode:hover {
-        // cursor: none;
-      }
-
-      canvas {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-    }
   }
 }

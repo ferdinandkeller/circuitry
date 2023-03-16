@@ -1,4 +1,3 @@
-import { viewbox_pos } from '@/globals/viewbox'
 import { modulo_ceiling, modulo_rounding, modulo_flooring, mod } from './math'
 
 // define a vector struct
@@ -124,19 +123,19 @@ export class Vector {
     }
 
     // add referencial conversion methods
-    to_world(): Vector {
+    to_world(viewbox_pos: Vector): Vector {
         return this.add(viewbox_pos)
     }
 
-    to_world_assign(): Vector {
+    to_world_assign(viewbox_pos: Vector): Vector {
         return this.add_assign(viewbox_pos)
     }
 
-    to_screen(): Vector {
+    to_screen(viewbox_pos: Vector): Vector {
         return this.sub(viewbox_pos)
     }
 
-    to_screen_assign(): Vector {
+    to_screen_assign(viewbox_pos: Vector): Vector {
         return this.sub_assign(viewbox_pos)
     }
 

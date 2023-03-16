@@ -17,9 +17,13 @@
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "skipLibCheck": true,
+        "strictPropertyInitialization": false,
         "paths": {
+            "@": [
+                "./src/circuitry_editor"
+            ],
             "@/*": [
-                "./src/*"
+                "./src/circuitry_editor/*"
             ]
         },
         "types": [

@@ -1,0 +1,45 @@
+.circuitry-editor {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &.pan-mode {
+        cursor: grab;
+    }
+
+    .renderer {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: white;
+
+        &.connect-mode:hover {
+            // cursor: none;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+
+    // .ui {
+    //     .toolbar {
+    //         position: fixed;
+    //         top: calc(2 * var(--dot-size));
+    //         left: calc(2 * var(--dot-size));
+    //         width: calc(15 * var(--dot-size));
+    //         height: calc(2 * var(--dot-size));
+    //         background-color: white;
+    //         border-radius: calc(var(--dot-size) / 2);
+    //         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+    //     }
+    // }
+}
