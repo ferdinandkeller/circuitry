@@ -5,6 +5,32 @@
 // import { Connection } from '@/utils/connection'
 // import { Orientation } from '@/utils/orientation'
 
+import { Child } from "@/utils/child"
+
+export class ConnectMode extends Child {
+    is_connecting: boolean = false
+
+    enter_connect_mode() {
+        // this.circuitry_editor.circuitry_editor_div.classList.add('connect-mode')
+    }
+
+    exit_connect_mode() {
+        // this.circuitry_editor.circuitry_editor_div.classList.remove('connect-mode')
+    }
+
+    connect_start() {
+        // this.circuitry_editor.render()
+    }
+
+    connect_move() {
+        // this.circuitry_editor.render()
+    }
+
+    connect_end() {
+        // this.circuitry_editor.render()
+    }
+}
+
 // // set connecting state variables
 // let is_connecting = false
 

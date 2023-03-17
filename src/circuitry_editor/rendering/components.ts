@@ -10,4 +10,13 @@ export class Components extends Child {
             component.render_component()
         }
     }
+
+    is_hovering() {
+        let rerender = false
+        for (let component of this.circuitry_editor.components) {
+            if (component.update_hover()) {
+                rerender = true
+            }
+        }
+    }
 }

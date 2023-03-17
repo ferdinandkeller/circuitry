@@ -23,8 +23,8 @@ else {
     if (editor_1 === null) { throw new Error('Could not find the #editor-1 div') }
     new CircuitryEditor(editor_1)
 
-    // create the second editor
-    let editor_2 = document.getElementById('editor-2') as HTMLDivElement | null
-    if (editor_2 === null) { throw new Error('Could not find the #editor-2 div') }
-    new CircuitryEditor(editor_2)
+    // // create the second editor
+    // let editor_2 = document.getElementById('editor-2') as HTMLDivElement | null
+    // if (editor_2 === null) { throw new Error('Could not find the #editor-2 div') }
+    // new CircuitryEditor(editor_2)
 }

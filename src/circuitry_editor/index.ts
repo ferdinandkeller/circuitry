@@ -55,6 +55,10 @@ export class CircuitryEditor {
 
     modes: Modes = new Modes(this)
 
+
+    request_full_render: boolean = false
+    request_render: boolean = false
+
     constructor(circuitry_editor_div: HTMLDivElement) {
         // save the div reference
         this.circuitry_editor_div = circuitry_editor_div
@@ -99,7 +103,23 @@ export class CircuitryEditor {
         window.addEventListener('keyup', (key_event) => this.key_up(key_event))
 
         // render the circuitry editor for the first time
-        this.full_render()
+        // this.full_render()
+        this.request_full_render = true
+
+        requestAnimationFrame(this.render_loop.bind(this))
+    }
+
+    render_loop() {
+        if (this.request_full_render) {
+            this.full_render()
+            this.request_full_render = false
+            this.request_render = false
+        } else if (this.request_render) {
+            this.render()
+            this.request_render = false
+        }
+
+        requestAnimationFrame(this.render_loop.bind(this))
     }
 
     generate_inner_html() {
